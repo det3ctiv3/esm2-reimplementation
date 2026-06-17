@@ -1,0 +1,23 @@
+model:
+  name: "facebook/esm2_t6_8M_UR50D"
+  num_classes: 10
+  dropout: 0.1
+  pooling: "mean"
+  freeze_layers: 6
+
+data:
+  max_length: 1024
+  batch_size: 64
+  num_workers: 8
+
+training:
+  epochs: 15
+  learning_rate: 0.001
+  weight_decay: 0.01
+  warmup_ratio: 0.1
+  fp16: true
+  device: "auto"
+
+logging:
+  wandb_project: "esm2-localization"
+  wandb_run_name: "esm2-8m-linear-probe"

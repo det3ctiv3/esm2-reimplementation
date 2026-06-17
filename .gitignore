@@ -1,0 +1,9 @@
+__pycache__/
+*.egg-info/
+.venv/
+wandb/
+checkpoints/
+data/
+*.pt
+*.pyc
+.env

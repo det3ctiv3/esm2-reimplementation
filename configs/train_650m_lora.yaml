@@ -1,0 +1,30 @@
+model:
+  name: "facebook/esm2_t33_650M_UR50D"
+  num_classes: 10
+  dropout: 0.1
+  pooling: "mean"
+  freeze_layers: null
+  use_lora: true
+
+lora:
+  r: 16
+  alpha: 32
+  dropout: 0.1
+  target_modules: ["q_proj", "k_proj", "v_proj"]
+
+data:
+  max_length: 1024
+  batch_size: 32
+  num_workers: 8
+
+training:
+  epochs: 10
+  learning_rate: 0.0002
+  weight_decay: 0.01
+  warmup_ratio: 0.1
+  fp16: true
+  device: "auto"
+
+logging:
+  wandb_project: "esm2-localization"
+  wandb_run_name: "esm2-650m-lora-r16"
