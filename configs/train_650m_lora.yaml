@@ -10,7 +10,7 @@ lora:
   r: 16
   alpha: 32
   dropout: 0.1
-  target_modules: ["q_proj", "k_proj", "v_proj"]
+  target_modules: ["query", "key", "value"]
 
 data:
   max_length: 1024
