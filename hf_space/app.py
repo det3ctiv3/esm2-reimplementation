@@ -24,35 +24,29 @@ REPO_ID = "whiteh4t/esm2-8m-protein-localization"
 
 
 class ESM2Classifier(nn.Module):
-    def __init__(self, model_name, num_classes=10, dropout=0.0, pooling="mean"):
+    def __init__(self, model_name, num_classes=10):
         super().__init__()
         self.esm = EsmModel.from_pretrained(model_name)
-        self.pooling = pooling
         hidden_size = self.esm.config.hidden_size
-
         self.classifier = nn.Sequential(
             nn.LayerNorm(hidden_size),
-            nn.Dropout(dropout),
+            nn.Dropout(0.0),
             nn.Linear(hidden_size, hidden_size // 4),
             nn.GELU(),
-            nn.Dropout(dropout),
+            nn.Dropout(0.0),
             nn.Linear(hidden_size // 4, num_classes),
         )
 
     def forward(self, input_ids, attention_mask):
         outputs = self.esm(input_ids=input_ids, attention_mask=attention_mask)
-        if self.pooling == "mean":
-            mask = attention_mask.unsqueeze(-1).float()
-            embeddings = (outputs.last_hidden_state * mask).sum(1)
-            embeddings = embeddings / mask.sum(1).clamp(min=1)
-        else:
-            embeddings = outputs.last_hidden_state[:, 0]
+        mask = attention_mask.unsqueeze(-1).float()
+        embeddings = (outputs.last_hidden_state * mask).sum(1)
+        embeddings = embeddings / mask.sum(1).clamp(min=1)
         return self.classifier(embeddings)
 
 
 print("Loading model...")
 tokenizer = AutoTokenizer.from_pretrained(MODEL_NAME)
-
 model = ESM2Classifier(model_name=MODEL_NAME, num_classes=10)
 
 checkpoint_path = hf_hub_download(repo_id=REPO_ID, filename="model.pt")
@@ -74,7 +68,7 @@ def predict(sequence: str):
 
     encoding = tokenizer(sequence, return_tensors="pt", padding=True, truncation=True, max_length=1024)
     logits = model(encoding["input_ids"], encoding["attention_mask"])
-    probs = torch.softmax(logits, dim=-1)[0].cpu().numpy()
+    probs = torch.softmax(logits, dim=-1)[0].numpy()
 
     return {LABEL_MAP[i]: float(probs[i]) for i in range(10)}
 
@@ -88,20 +82,13 @@ demo = gr.Interface(
     ),
     outputs=gr.Label(num_top_classes=10, label="Predicted Subcellular Localization"),
     title="ESM-2 Protein Subcellular Localization",
-    description=(
-        "Predict where a protein localizes in the cell using ESM-2 8M fine-tuned on DeepLoc 2.0 (69.6% accuracy). "
-        "Paste an amino acid sequence (max 1024 residues). Fast CPU inference."
-    ),
+    description="Predict where a protein localizes in the cell using ESM-2 8M fine-tuned on DeepLoc 2.0 (69.6% accuracy). Paste an amino acid sequence (max 1024 residues).",
     examples=[
         ["MKTVRQERLKSIVRILERSKEPVSGAQLAEELSVSRQVIVQDIAYLRSLGYNIVATPRGYVLAGG"],
         ["MLSRAVCGTSRQLAPVLGYLGSRQKHSLPDLPYDYGALEPHINAQIMQLHHSKHHAAYVNNLNVTEEKYQEALAKGDVTAQIALQPALKFNGGGHINHSIFWTNPKKQLDAAGMVTAALEGNGASALRDLAKKIEELQKAHDTYAKLVNQAIQQLEKEKLEGEISKQNQRIRALGEINASN"],
         ["MKWVTFISLLFLFSSAYSRGVFRRDAHKSEVAHRFKDLGEENFKALVLIAFAQYLQQCPFEDHVKLVNEVTEFAKTCVADESAENCDKS"],
     ],
-    article=(
-        "**Model**: [whiteh4t/esm2-8m-protein-localization](https://huggingface.co/whiteh4t/esm2-8m-protein-localization) | "
-        "**GitHub**: [det3ctiv3/esm2-reimplementation](https://github.com/det3ctiv3/esm2-reimplementation) | "
-        "**Best model (650M LoRA)**: [whiteh4t/esm2-650m-protein-localization-lora](https://huggingface.co/whiteh4t/esm2-650m-protein-localization-lora)"
-    ),
+    article="**GitHub**: [det3ctiv3/esm2-reimplementation](https://github.com/det3ctiv3/esm2-reimplementation) | **Best model (650M LoRA)**: [whiteh4t/esm2-650m-protein-localization-lora](https://huggingface.co/whiteh4t/esm2-650m-protein-localization-lora)",
 )
 
 if __name__ == "__main__":
