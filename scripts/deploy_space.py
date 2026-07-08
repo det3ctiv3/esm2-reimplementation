@@ -1,17 +1,17 @@
 #!/usr/bin/env python3
-"""Upload 150M checkpoint to HF and deploy Gradio Space."""
+"""Upload 8M checkpoint to HF and deploy Gradio Space."""
 
 from huggingface_hub import HfApi, create_repo, upload_file
 
-MODEL_REPO = "whiteh4t/esm2-150m-protein-localization"
+MODEL_REPO = "whiteh4t/esm2-8m-protein-localization"
 SPACE_REPO = "whiteh4t/esm2-protein-localization"
-CHECKPOINT = "checkpoints/esm2-150m-full-finetune_best.pt"
+CHECKPOINT = "checkpoints/esm2-8m-linear-probe_best.pt"
 
 
 def main():
     api = HfApi()
 
-    # Upload the 150M checkpoint as a model repo
+    # Upload the 8M checkpoint as a model repo
     print(f"Creating model repo: {MODEL_REPO}")
     create_repo(MODEL_REPO, exist_ok=True)
     print(f"Uploading checkpoint ({CHECKPOINT})...")

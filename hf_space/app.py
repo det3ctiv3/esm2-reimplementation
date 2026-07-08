@@ -19,8 +19,8 @@ LABEL_MAP = {
     9: "Peroxisome",
 }
 
-MODEL_NAME = "facebook/esm2_t30_150M_UR50D"
-REPO_ID = "whiteh4t/esm2-150m-protein-localization"
+MODEL_NAME = "facebook/esm2_t6_8M_UR50D"
+REPO_ID = "whiteh4t/esm2-8m-protein-localization"
 
 
 class ESM2Classifier(nn.Module):
@@ -89,8 +89,8 @@ demo = gr.Interface(
     outputs=gr.Label(num_top_classes=10, label="Predicted Subcellular Localization"),
     title="ESM-2 Protein Subcellular Localization",
     description=(
-        "Predict where a protein localizes in the cell using ESM-2 150M fine-tuned on DeepLoc 2.0 (76.6% accuracy). "
-        "Paste an amino acid sequence (max 1024 residues). Inference runs on CPU — takes ~3 seconds."
+        "Predict where a protein localizes in the cell using ESM-2 8M fine-tuned on DeepLoc 2.0 (69.6% accuracy). "
+        "Paste an amino acid sequence (max 1024 residues). Fast CPU inference."
     ),
     examples=[
         ["MKTVRQERLKSIVRILERSKEPVSGAQLAEELSVSRQVIVQDIAYLRSLGYNIVATPRGYVLAGG"],
