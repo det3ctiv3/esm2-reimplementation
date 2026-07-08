@@ -7,7 +7,7 @@ import pandas as pd
 import numpy as np
 from torch.utils.data import DataLoader
 from transformers import AutoTokenizer
-from peft import LoraConfig, get_peft_model, TaskType
+from peft import LoraConfig, get_peft_model
 from src.data.dataset import ProteinLocalizationDataset
 from src.models.classifier import ESM2Classifier
 from src.training.metrics import compute_metrics
@@ -53,7 +53,6 @@ def evaluate_model(name, info, test_loader, device):
 
     if info.get("use_lora"):
         lora_config = LoraConfig(
-            task_type=TaskType.FEATURE_EXTRACTION,
             r=16,
             lora_alpha=32,
             lora_dropout=0.0,
@@ -64,6 +63,10 @@ def evaluate_model(name, info, test_loader, device):
 
     state_dict = torch.load(info["checkpoint"], map_location=device, weights_only=True)
     model.load_state_dict(state_dict, strict=False)
+
+    if info.get("use_lora"):
+        model = model.merge_and_unload()
+
     model.to(device)
     model.eval()
 
