@@ -98,9 +98,9 @@ demo = gr.Interface(
         ["MKWVTFISLLFLFSSAYSRGVFRRDAHKSEVAHRFKDLGEENFKALVLIAFAQYLQQCPFEDHVKLVNEVTEFAKTCVADESAENCDKS"],
     ],
     article=(
-        "**Model**: [whiteh4t/esm2-150m-protein-localization](https://huggingface.co/whiteh4t/esm2-150m-protein-localization) | "
+        "**Model**: [whiteh4t/esm2-8m-protein-localization](https://huggingface.co/whiteh4t/esm2-8m-protein-localization) | "
         "**GitHub**: [det3ctiv3/esm2-reimplementation](https://github.com/det3ctiv3/esm2-reimplementation) | "
-        "**LoRA 650M model**: [whiteh4t/esm2-650m-protein-localization-lora](https://huggingface.co/whiteh4t/esm2-650m-protein-localization-lora)"
+        "**Best model (650M LoRA)**: [whiteh4t/esm2-650m-protein-localization-lora](https://huggingface.co/whiteh4t/esm2-650m-protein-localization-lora)"
     ),
 )
 
